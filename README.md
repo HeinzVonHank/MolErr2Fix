@@ -2,6 +2,10 @@
 
 A comprehensive benchmark dataset for evaluating Large Language Models' capabilities in detecting, localizing, explaining, and correcting chemical errors in molecular descriptions.
 
+Paper: https://huggingface.co/papers/2509.00063 (**EMNLP 2025 Oral**)
+Dataset: https://huggingface.co/datasets/YoungerWu/MolErr2Fix
+
+
 ## 🧬 Overview
 
 MolErr2Fix is a specialized benchmark designed to assess how well Large Language Models (LLMs) can handle molecular chemistry error analysis tasks. The benchmark evaluates four core capabilities:
