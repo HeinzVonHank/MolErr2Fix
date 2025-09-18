@@ -1,0 +1,141 @@
+error_types:
+  - codename: "E1"
+    name: "Functional Group/Substituent Error"
+    definition: >
+      The LLM incorrectly described a substructure within a given molecule,
+      including misidentifying the type or name of substituents or functional groups,
+      incorrectly describing the connectivity between substructures, or mistakenly
+      claiming the presence of a substructure that does not actually exist.
+    examples:
+      - input_smiles: "C1=CC(=CC=C1C[C@@H](C(=O)O)NS(=O)(=O)O)O"
+        problematic_description: >
+          The molecule contains a carboxylic acid group, a sulfonamide group,
+          and a phenol group.
+        problem: >
+          The substructure attached to the beta carbon of the carboxyl group
+          does not satisfy the definition of a sulfonamide; it is actually
+          a sulfo group.
+      - input_smiles: "CC(=CCC/C(=C/CC/C(=C/CC[C@@]1(CCC2=C(O1)C=CC(=C2)O)C)/C)/C)C"
+        problematic_description: >
+          The molecule is a natural product with a complex structure featuring
+          a furan ring fused to a phenol moiety.
+        problem: >
+          The fused ring is chromane, not a furan; the oxygen-containing ring
+          has six members and is a pyranose, not a furan.
+      - input_smiles: "CC(=CCC/C(=C/CC/C(=C/CC[C@@]1(CCC2=C(O1)C=CC(=C2)O)C)/C)/C)C"
+        problematic_description: >
+          It contains multiple alkene groups in a conjugated system with several
+          methyl substituents along the carbon chain.
+        problem: >
+          The alkene groups are not actually in a conjugated system.
+
+  - codename: "E2"
+    name: "Classification Error"
+    definition: >
+      The LLM incorrectly described the name, type, or category of the species,
+      including incorrect statements about aromaticity or core scaffold classification.
+    examples:
+      - input_smiles: "C1=CC(=C(C=C1O)[O-])C2=COC3=CC(=CC(=C3C2=O)O)O"
+        problematic_description: >
+          The molecule is a flavonoid, specifically a flavonol.
+        problem: >
+          It should be classified as an isoflavone, not a flavonol.
+      - input_smiles: "C1=COC=CO1"
+        problematic_description: >
+          The molecule is 1,4-dioxin, an aromatic heterocycle.
+        problem: >
+          1,4‑dioxine is non‑aromatic; it is not an aromatic heterocycle.
+      - input_smiles: "CCCCCC(/C=C/C=C\\C/C=C\\C/C=C\\CCCC(=O)O)O"
+        problematic_description: >
+          This compound belongs to the class of omega‑3 fatty acids.
+        problem: >
+          It does not belong to omega‑3 fatty acids.
+
+  - codename: "E3"
+    name: "Derivation Error"
+    definition: >
+      The LLM incorrectly described the precursor or parent structure of the molecule,
+      or misstated its conjugate acid/base relationship.
+    examples:
+      - input_smiles: "NP(O)O"
+        problematic_description: >
+          The simplest phosphoric monoamide derivative of phosphoric acid.
+        problem: >
+          It is a derivative of phosphorous acid (H₃PO₃), not phosphoric acid (H₃PO₄).
+      - input_smiles: "CCN"
+        problematic_description: >
+          It is a conjugate base of a N‑methylputrescinium(2+).
+        problem: >
+          The conjugate acid is ethylaminium (CH₃CH₂NH₃⁺), not N‑methylputrescinium.
+      - input_smiles: "C1=CC(=C(C=C1C2(C3=C(C(=C(C(=C3Br)Br)Br)Br)C(=O)O2)C4=CC(=C(C=C4)O)S(=O)(=O)[O-])S(=O)(=O)[O-])O.[Na+].[Na+]"
+        problematic_description: >
+          It is a derivative of eosin Y, a fluorescent red dye.
+        problem: >
+          It derives from 2‑benzofuran‑1(3H)‑one, not eosin Y.
+
+  - codename: "E4"
+    name: "Stereochemistry Error"
+    definition: >
+      The LLM incorrectly identified chiral configurations (R/S), double‐bond
+      stereochemistry (E/Z), or cis/trans arrangements, or omitted determinable stereochemistry.
+    examples:
+      - input_smiles: "CCCCCCCCCCCCCCCC/C=C\\OC[C@H](COP(=O)(O)O)O"
+        problematic_description: >
+          … a trans‑configured monounsaturated fatty acid …
+        problem: >
+          The fatty acid is cis‑configured, not trans.
+      - input_smiles: "CCOC1=C(C=CC(=C1)[C@@H](CS(=O)(=O)C)N2C(=O)C3=C(C2=O)C=CC(=C3)NC(=O)C)OC"
+        problematic_description: >
+          … featuring a methoxy‑substituted phenyl ring and a chiral center.
+        problem: >
+          Fails to specify stereochemistry; the correct structure is (1S)‑configured.
+      - input_smiles: "C1CSS[C@H]1CCCCC(=O)O"
+        problematic_description: >
+          The molecule is the (R)‑enantiomer of lipoic acid.
+        problem: >
+          It is the (S)‑enantiomer, not the (R).
+
+  - codename: "E5"
+    name: "Sequence/Composition Error"
+    definition: >
+      The LLM mismatched chain length, monomer count, ring size, or substituent
+      count, resulting in incorrect molecular sequence or composition.
+    examples:
+      - input_smiles: "C1[C@@H]([C@@H]([C@H](N1)C(=O)O)CC(=O)O)C2=CC=C(NC2=O)C(=O)O"
+        problematic_description: >
+          A monocarboxylic acid.
+        problem: >
+          It is a tricarboxylic acid (three carboxyl groups).
+      - input_smiles: "CCC(CC)O"
+        problematic_description: >
+          The molecule is 2‑butanol (C₄H₁₀O).
+        problem: >
+          It is pentan‑3‑ol (C₅H₁₀O), not 2‑butanol.
+      - input_smiles: "C1CCC(=NNC2=NC(=CS2)C3=CC=C(C=C3)Cl)C1"
+        problematic_description: >
+          The structure contains a cyclohexane ring …
+        problem: >
+          It contains a cyclopentane ring, not cyclohexane.
+
+  - codename: "E6"
+    name: "Indexing Error"
+    definition: >
+      The LLM incorrectly described substituent positions, ring labeling,
+      or positional descriptors (ortho/meta/para) in the molecule.
+    examples:
+      - input_smiles: "CCCCCCCC[C@@H](/C=C/CCCCCCC(=O)O)OO"
+        problematic_description: >
+          (9E,11E)‑octadeca‑9,11‑dienoic acid.
+        problem: >
+          The correct double bond is at position 8 (8E‑octadecenoic acid), not 9,11.
+      - input_smiles: "C1=CC(=C(C=C1O)[O-])C2=COC3=CC(=CC(=C3C2=O)O)O"
+        problematic_description: >
+          Hydroxyls at 3,5,7 on A and C rings, deprotonated at 4′ on B ring.
+        problem: >
+          The C ring is the central pyran, not a phenyl; hydroxyls are at 5,7 (A ring)
+          and 4′ (B ring); deprotonated at 2′.
+      - input_smiles: "C1=CC(=CC=C1/C=C/C(=O)O)C(F)(F)F"
+        problematic_description: >
+          A meta‑trifluoromethylbenzene derivative of trans‑cinnamic acid.
+        problem: >
+          The –CF₃ is at the para‑position, not meta.
