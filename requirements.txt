@@ -1,0 +1,13 @@
+numpy>=1.20.0
+pandas>=1.3.0
+datasets>=2.0.0
+tqdm>=4.60.0
+PyYAML>=5.4.0
+
+# LLM API clients (install as needed)
+openai>=1.0.0
+google-generativeai>=0.3.0
+anthropic>=0.18.0
+
+# Optional for BLEU score (reasoning task)
+nltk>=3.6.0

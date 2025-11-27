@@ -88,7 +88,7 @@ Explain briefly and clearly why the above fragment is incorrect. Limit your expl
 
                     prompt = self.create_prompt_with_reason(
                         sample["SMILES"],
-                        sample["initial_description"],
+                        sample["Generated_Description"],
                         error_span
                     )
 
@@ -252,7 +252,7 @@ def main():
 
     # 2) Load data
     molbench = MolBenchFormater(args.tsv)
-    molbench.samples = molbench.load(stat=args.start,end=args.end)
+    molbench.samples = molbench.load(start=args.start, end=args.end, return_json=True)
 
     # 3) Initialize LLM interface for generation
     eval_api = get_llm_interfance(args.model)

@@ -31,7 +31,7 @@ class ErrorCorrectionEvaluator:
             row = self.molbench_formatter.db.iloc[idx]
             CID = row['CID']
             smiles = row['SMILES']
-            description = row['Initial Description']
+            description = row['Generated_Description']
             block = []
             for wrong_segment in row['Parsed where wrong']:
                 prompt = self.prompt_template.substitute(
@@ -99,7 +99,7 @@ class LLMRevisionResultEvaluator:
         for idx in tqdm.tqdm(range(N)):
             row = self.molbench_formatter.db.iloc[idx]
             CID = row['CID']
-            description = row['Initial Description']
+            description = row['Generated_Description']
             block = []
             for wrong_segment, human_correct, llm_correct in zip(row['Parsed where wrong'], row['Parsed Correct'], row['LLM Revised']):
                 if not all([wrong_segment, human_correct, llm_correct]):

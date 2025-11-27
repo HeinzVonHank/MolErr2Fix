@@ -33,9 +33,9 @@ class MolBenchFormater:
             raise RuntimeError(f"Failed to load dataset from Hugging Face: {e}")
 
     def _preprocess_dataframe(self):
-        self.db['Parsed where wrong'] = self.db['where wrong'].apply(lambda x: [re.sub(SentenceIndexRe, '', l) for l in x.strip().split('\n')])
-        self.db['Parsed Wrong Class/ Reasons'] = self.db['Wrong Class/ Reasons'].apply(self.parse_reason_block)
-        self.db['Parsed Correct'] = self.db['Correct'].apply(lambda x: [re.sub(SentenceIndexRe, '', l) for l in x.strip().split('\n')])
+        self.db['Parsed where wrong'] = self.db['Error_Spans'].apply(lambda x: [re.sub(SentenceIndexRe, '', l) for l in x.strip().split('\n')])
+        self.db['Parsed Wrong Class/ Reasons'] = self.db['Error_Types_and_Reasons'].apply(self.parse_reason_block)
+        self.db['Parsed Correct'] = self.db['Corrected_Description'].apply(lambda x: [re.sub(SentenceIndexRe, '', l) for l in x.strip().split('\n')])
 
         error_counts = self.db['Parsed where wrong'].apply(len)
         mismatch = np.where(error_counts != self.db['Parsed Wrong Class/ Reasons'].apply(len))[0]
@@ -77,7 +77,7 @@ class MolBenchFormater:
             error_samples = []
             for idx in range(len(subset_db)):
                 row = subset_db.iloc[idx]
-                sample = row[['CID', 'SMILES', 'Ground Truth', 'Initial Description']].to_dict()
+                sample = row[['CID', 'SMILES', 'Ground_Truth_Description', 'Generated_Description']].to_dict()
                 sample['index'] = str(row['CID'])
                 sample['inside_errors'] = {}
                 for j in range(len(row['Parsed where wrong'])):

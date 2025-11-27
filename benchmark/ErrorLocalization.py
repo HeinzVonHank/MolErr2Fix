@@ -75,7 +75,7 @@ class UnifiedErrorLocalizaitonGenerator:
     def error_localization(self, samples: List[Dict]) -> List[Dict]:
         for sample in tqdm(samples, desc="Generating open-ended error detections"):
             try:
-                prompt = self.create_prompt(sample["SMILES"], sample["Initial Description"])
+                prompt = self.create_prompt(sample["SMILES"], sample["Generated_Description"])
                 gpt_output = self.gpt_interface.inference_text_only(
                     query=prompt,
                     system_message="You are a helpful assistant.",

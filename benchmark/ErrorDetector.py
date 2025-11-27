@@ -71,7 +71,7 @@ class OpenEndErrorEvaluator:
             row = self.molbench_formatter.db.iloc[idx]
             CID = row['CID']
             smiles = row['SMILES']
-            description = row['Initial Description']
+            description = row['Generated_Description']
             ground_truth = np.array([l[0] for l in row['Parsed Wrong Class/ Reasons']])
             predicted_errors, llm_response = self.evaluate(smiles, description)
             if verbose:

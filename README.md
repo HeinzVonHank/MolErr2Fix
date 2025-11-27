@@ -43,48 +43,93 @@ The benchmark defines 6 main categories of molecular description errors:
 ### Installation
 
 ```bash
-git clone https://github.com/yourusername/MolErr2Fix.git
+git clone https://github.com/HeinzVonHank/MolErr2Fix.git
 cd MolErr2Fix
 pip install -r requirements.txt
 ```
 
-### Basic Usage
+### Environment Setup
 
-#### Error Detection
+Set up your API keys:
 ```bash
-python benchmark/ErrorDetector.py --model gemini-2.0-flash --read_from ALL
+export OPENAI_API_KEY="your_openai_key"
+export GEMINI_API_KEY="your_gemini_key"
+export ANTHROPIC_API_KEY="your_anthropic_key"
+export XAI_API_KEY="your_xai_key"  # For Grok
 ```
 
-#### Error Localization
+### How to Run
+
+#### 1. Run Tests (No API Key Needed)
 ```bash
-python benchmark/ErrorLocalization.py --model gpt-4 --error_yaml ./benchmark/error_type_new.yaml
+python run_tests.py
+```
+This will verify that all components work correctly.
+
+#### 2. Error Detection
+```bash
+# Evaluate all samples
+python eval.py detection --model gpt-4o --start 0 --end -1
+
+# Evaluate first 10 samples
+python eval.py detection --model gpt-4o --start 0 --end 10
+
+# Using shell script
+bash scripts/run_detection.sh gpt-4o 0 10
 ```
 
-#### Error Reasoning
+#### 3. Error Localization
 ```bash
-python benchmark/ErrorReasoning.py --model claude-3-sonnet --dataset_path ./data/
+# Evaluate first 10 samples
+python eval.py localization --model gpt-4o --start 0 --end 10
+
+# Using shell script
+bash scripts/run_localization.sh gpt-4o 0 10
 ```
 
-#### Error Revision
+#### 4. Error Reasoning
 ```bash
-python benchmark/ErrorRevision.py --model gpt-4-turbo --save_to ./results/revised.csv
+# Evaluate first 5 samples
+python eval.py reasoning --model gpt-4o --eval_model gpt-4o --start 0 --end 5
+
+# Using shell script
+bash scripts/run_reasoning.sh gpt-4o gpt-4o 0 5
 ```
+
+#### 5. Error Revision
+```bash
+# Evaluate first 5 samples
+python eval.py revision --model gpt-4o --eval_model gpt-4o --start 0 --end 5
+
+# Using shell script
+bash scripts/run_revision.sh gpt-4o gpt-4o 0 5
+```
+
+**Note:** Results will be saved to `results/<model_name>/` directory.
 
 ## 📁 Project Structure
 
 ```
 MolErr2Fix/
-├── benchmark/
-│   ├── ErrorDetector.py      # Error detection evaluation
-│   ├── ErrorLocalization.py  # Error localization assessment
-│   ├── ErrorReasoning.py     # Error explanation evaluation
-│   ├── ErrorRevision.py      # Error correction assessment
-│   ├── dataloader.py         # Dataset loading utilities
-│   ├── llm_interface.py      # LLM API interfaces
-│   ├── utilities.py          # Helper functions
-│   └── error_type_new.yaml   # Error type definitions
-├── LICENSE                   # MIT License
-└── README.md                # This file
+├── src/
+│   ├── evaluators/
+│   │   ├── error_detector.py      # Error detection evaluator
+│   │   ├── error_localization.py  # Error localization evaluator
+│   │   ├── error_reasoning.py     # Error reasoning evaluator
+│   │   └── error_revision.py      # Error revision evaluator
+│   ├── dataloader.py              # Dataset loading utilities
+│   ├── llm_interface.py           # LLM API interfaces
+│   └── utils.py                   # Helper functions
+├── configs/
+│   └── error_types.yaml           # Error type definitions
+├── scripts/
+│   ├── run_detection.sh           # Detection evaluation script
+│   ├── run_localization.sh        # Localization evaluation script
+│   ├── run_reasoning.sh           # Reasoning evaluation script
+│   └── run_revision.sh            # Revision evaluation script
+├── eval.py                        # Main evaluation entry point
+├── LICENSE                        # MIT License
+└── README.md                      # This file
 ```
 
 ## 🔧 Configuration
@@ -92,19 +137,21 @@ MolErr2Fix/
 ### Model Support
 
 The benchmark supports multiple LLM providers:
-- OpenAI GPT models (GPT-3.5, GPT-4, GPT-4-turbo)
-- Google Gemini models
-- Anthropic Claude models
-- Custom model interfaces
+- OpenAI GPT models (gpt-4, gpt-4o, gpt-4-turbo, etc.)
+- Google Gemini models (gemini-2.0-flash, gemini-pro, etc.)
+- Anthropic Claude models (claude-3-7-sonnet, claude-3-opus, etc.)
+- xAI Grok models (grok-3, etc.)
 
-### Environment Variables
+### Command Line Arguments
 
-Set up your API keys:
-```bash
-export OPENAI_API_KEY="your_openai_key"
-export GOOGLE_API_KEY="your_google_key"
-export ANTHROPIC_API_KEY="your_anthropic_key"
-```
+Common arguments for `eval.py`:
+- `task`: Evaluation task (detection, localization, reasoning, revision)
+- `--model`: Model name for generation
+- `--eval_model`: Model name for evaluation (reasoning/revision tasks)
+- `--start`: Start index (default: 0)
+- `--end`: End index (default: -1 for all samples)
+- `--output_dir`: Output directory (default: results)
+- `--verbose`: Enable verbose output
 
 ## 📈 Evaluation Metrics
 
